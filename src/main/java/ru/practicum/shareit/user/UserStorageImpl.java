@@ -69,8 +69,8 @@ public class UserStorageImpl implements UserStorage {
         return user;
     }
 
-    public void deleteUserById(long userId) {               // метод удаления пользователя
-        userMap.remove(userId);
-        log.info("Пользователь ID = {} удален", userId);
+    public User deleteUserById(long userId) {               // метод удаления пользователя
+            log.info("Пользователь ID = {} удален", userId);
+            return userMap.remove(userId);
     }
 }

@@ -71,7 +71,7 @@ public class UserControllerTest {
                         post("/users")
                                 .content(objectMapper.writeValueAsString(userDto))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Ivan"))
                 .andExpect(jsonPath("$.email").value("van@ya.com"))
                 .andExpect(jsonPath("$.*", hasSize(3)));

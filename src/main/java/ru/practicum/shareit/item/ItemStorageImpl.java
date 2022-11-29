@@ -27,7 +27,10 @@ public class ItemStorageImpl implements ItemStorage {
 
     public Item getItembyId(Long itemId) {                  // метод получения вещи по ID
         log.info("Информация о вещи ID = {} передана", itemId);
-        return itemMap.get(itemId);
+        return itemMap.values().stream()
+                .filter(p -> p.getId() == itemId)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id. Попробуйте еще раз."));
     }
 
     public Collection<Item> searchItem(String text) {           // метод поиска вещи

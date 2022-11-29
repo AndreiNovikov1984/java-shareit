@@ -24,7 +24,7 @@ public class ItemService {
     public Collection<ItemDto> getItems(long userID) {        // метод получения списка вещей по ID пользователя
         checkId(userID);
         return itemStorage.getAllItems(userID).stream()
-                .map(p -> itemMapper.convertItemToDto(p))
+                .map(itemMapper::convertItemToDto)
                 .collect(Collectors.toList());
     }
 
@@ -38,7 +38,7 @@ public class ItemService {
             text = text.toLowerCase();
         }
         return itemStorage.searchItem(text).stream()
-                .map(p -> itemMapper.convertItemToDto(p))
+                .map(itemMapper::convertItemToDto)
                 .collect(Collectors.toList());
     }
 

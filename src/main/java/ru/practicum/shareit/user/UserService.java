@@ -21,7 +21,7 @@ public class UserService {
 
     public Collection<UserDto> getUsers() {             // метод получения списка пользователей
         return userStorage.getAllUsers().stream()
-                .map(p -> userMapper.convertUserToDto(p))
+                .map(userMapper::convertUserToDto)
                 .collect(Collectors.toList());
     }
 
@@ -43,9 +43,9 @@ public class UserService {
         return userMapper.convertUserToDto(userStorage.updateUser(user));
     }
 
-    public void deleteUser(long userId) {                       // метод удаления пользователя
+    public User deleteUser(long userId) {                       // метод удаления пользователя
         checkId(userId);
-        userStorage.deleteUserById(userId);
+       return userStorage.deleteUserById(userId);
     }
 
     private void checkId(long userId) {

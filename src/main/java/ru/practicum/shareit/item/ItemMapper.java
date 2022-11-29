@@ -1,31 +1,14 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-@Component
-public class ItemMapper {
-    public ItemDto convertItemToDto(Item item) {            // метод преобразования Item в ItemDto
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .request(item.getRequest())
-                .itemFeedback(item.getItemFeedback())
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
+    ItemDto convertItemToDto(Item item);             // метод преобразования Item в ItemDto
 
-    public Item convertDtoToItem(long userID, ItemDto itemDto) {       // метод преобразования ItemDto в Item
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .itemOwnerId(userID)
-                .request(itemDto.getRequest())
-                .itemFeedback(itemDto.getItemFeedback())
-                .build();
-    }
+    @Mapping(source = "userID", target = "itemOwnerId")
+    Item convertDtoToItem(long userID, ItemDto itemDto);        // метод преобразования ItemDto в Item
 }
