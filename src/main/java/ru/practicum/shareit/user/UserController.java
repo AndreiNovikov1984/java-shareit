@@ -27,7 +27,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {         // метод получения пользователя по Id
-        return new ResponseEntity<>(userService.getUserWithId(id), HttpStatus.OK);
+        UserDto userdto = userService.getUserWithId(id);
+        return userdto != null
+                ? new ResponseEntity<>(userdto, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
@@ -42,8 +45,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")                                     // метод удаления пользователя
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
-        return userService.deleteUser(id) != null
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

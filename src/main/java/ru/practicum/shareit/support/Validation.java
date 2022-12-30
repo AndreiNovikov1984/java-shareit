@@ -4,8 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -45,6 +49,22 @@ public class Validation {
         if (item.getId() < 0) {
             log.warn("Некорректный id вещи в запросе - {}", item.getId());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id. Попробуйте еще раз.");
+        }
+    }
+
+    public static void validationBooking(BookingDto booking) {
+        if ((booking.getStart().isAfter(booking.getEnd())) || (booking.getStart().isBefore(LocalDateTime.now()))
+                || (booking.getEnd().isBefore(LocalDateTime.now()))) {
+            log.warn("Ошибка в email - {}", booking.getId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Данные бронирования не корректны. Попробуйте еще раз.");
+        }
+    }
+
+    public static void validationComment(Comment comment) {
+        if ((comment == null) || (comment.getText().equals("null")) ||
+                (comment.getText().equals(""))) {
+            log.warn("Ошибка в комменте - {}", comment.getId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный комментарий пустой");
         }
     }
 }
