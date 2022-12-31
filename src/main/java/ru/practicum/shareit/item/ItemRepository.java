@@ -6,13 +6,10 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Repository
-public interface ItemStorage extends JpaRepository<Item, Long> {
-    Collection<Item> findAllByOwner(Long owner);
-
-    Optional<Item> findItemById(Long itemId);
+public interface ItemRepository extends JpaRepository<Item, Long> {
+    Collection<Item> findAllByOwnerId(Long owner);
 
     @Query(value = "select it " +
             "from Item as it " +
@@ -21,5 +18,4 @@ public interface ItemStorage extends JpaRepository<Item, Long> {
             "AND it.available = true")
     Collection<Item> searchItem(String text);
 
-    Item save(Item item);
 }

@@ -9,10 +9,11 @@ import ru.practicum.shareit.item.model.Comment;
 public interface CommentMapper {
     @Mapping(source = "author.name", target = "authorName")
     @Mapping(source = "author.id", target = "authorId")
-    @Mapping(source = "item", target = "itemId")
+    @Mapping(source = "item.id", target = "itemId")
     CommentDto convertCommentToDto(Comment comment);             // метод преобразования Comment в CommentDto
 
     @Mapping(source = "authorId", target = "author.id")
+    @Mapping(source = "itemId", target = "item.id")
     Comment convertDtoToComment(CommentDto commentDto);             // метод преобразования CommentDto в Comment
 
 }

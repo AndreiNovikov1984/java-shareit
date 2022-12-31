@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * TODO Sprint add-controllers.
  */
 @Entity
-@Table(name = "ITEMS", schema = "public")
+@Table(name = "items", schema = "public")
 @Getter
 @Setter
 @ToString
@@ -19,18 +20,19 @@ import java.util.List;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ITEM_ID")
+    @Column(name = "id")
     public long id;
-    @Column(name = "ITEM_NAME", nullable = false)
+    @Column(name = "item_name", nullable = false)
     public String name;
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "description", nullable = false)
     public String description;
-    @Column(name = "AVAILABLE", nullable = false)
+    @Column(name = "available", nullable = false)
     public Boolean available;
-    @Column(name = "OWNER_ID", nullable = false)
-    public long owner;
-    @Column(name = "REQUEST")
-    public long request;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    public User owner;
+    @Column(name = "request_id")
+    public long requestId;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Comment> comments;
 }

@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  * TODO Sprint add-bookings.
  */
 @Entity
-@Table(name = "BOOKINGS", schema = "public")
+@Table(name = "bookings", schema = "public")
 @Getter
 @Setter
 @ToString
@@ -21,19 +21,19 @@ import java.sql.Timestamp;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BOOKING_ID")
+    @Column(name = "id")
     public long id;
-    @Column(name = "START_DATE", nullable = false)
+    @Column(name = "start_date", nullable = false)
     public Timestamp start;
-    @Column(name = "END_DATE", nullable = false)
+    @Column(name = "end_date", nullable = false)
     public Timestamp end;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     public Item item;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BOOKER_ID", nullable = false)
+    @JoinColumn(name = "booker_id", nullable = false)
     public User booker;
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "status", nullable = false)
     public TypeStatus status;
 }

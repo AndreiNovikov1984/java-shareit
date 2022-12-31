@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "COMMENTS", schema = "public")
+@Table(name = "comments", schema = "public")
 @Getter
 @Setter
 @Builder
@@ -17,15 +17,16 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "COMMENT_ID")
+    @Column(name = "id")
     public long id;
-    @Column(name = "TEXT", nullable = false)
+    @Column(name = "text", nullable = false)
     public String text;
-    @Column(name = "ITEM_ID", nullable = false)
-    public long item;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AUTHOR_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
+    public Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
     public User author;
-    @Column(name = "CREATED", nullable = false)
+    @Column(name = "created", nullable = false)
     public LocalDateTime created;
 }

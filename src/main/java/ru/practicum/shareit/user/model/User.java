@@ -8,7 +8,7 @@ import javax.persistence.*;
  * TODO Sprint add-controllers.
  */
 @Entity
-@Table(name = "USERS", schema = "public")
+@Table(name = "users", schema = "public")
 @Getter
 @Setter
 @ToString
@@ -18,11 +18,11 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID", nullable = false, updatable = false, unique = true)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
     private long id;
-    @Column(name = "USER_NAME", nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String name;
-    @Column(name = "USER_EMAIL", nullable = false, unique = true)
+    @Column(name = "user_email", nullable = false, unique = true)
     private String email;
 
 }

@@ -37,37 +37,33 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "WHERE b.item.owner = ?1 " +
+            "WHERE b.item.owner.id = ?1 " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerOrderByStartDesc(long userID);
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "WHERE b.item.owner = ?1 and ?2 between b.start and  b.end " +
+            "WHERE b.item.owner.id = ?1 and ?2 between b.start and  b.end " +
             "order by b.start desc ")
     List<Booking> findCurrentByOwner(long userID, Timestamp now);
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "WHERE b.item.owner = ?1 and b.end < ?2 " +
+            "WHERE b.item.owner.id = ?1 and b.end < ?2 " +
             "order by b.start desc ")
     List<Booking> findPastByOwner(long userID, Timestamp now);
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "WHERE b.item.owner = ?1 and b.start > ?2 " +
+            "WHERE b.item.owner.id = ?1 and b.start > ?2 " +
             "order by b.start desc ")
     List<Booking> findFutureByOwner(long userID, Timestamp now);
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "WHERE b.item.owner = ?1 and b.status = ?2 " +
+            "WHERE b.item.owner.id = ?1 and b.status = ?2 " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerAndStatusOrderByStartDesc(long userID, TypeStatus status);
-
-    Optional<Booking> findById(long id);
-
-    Booking save(Booking booking);
 
     @Query(value = "select b " +
             "from Booking as b " +

@@ -4,12 +4,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserMapper;
 
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface ItemMapper {
     ItemDto convertItemToDto(Item item);             // метод преобразования Item в ItemDto
 
-    @Mapping(source = "userId", target = "owner")
-    Item convertDtoToItem(long userId, ItemDto itemDto);        // метод преобразования ItemDto в Item
+    @Mapping(target = "owner", ignore = true)
+    Item convertDtoToItem(ItemDto itemDto);        // метод преобразования ItemDto в Item
 }

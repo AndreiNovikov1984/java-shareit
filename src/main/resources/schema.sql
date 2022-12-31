@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS REQUEST cascade;
 
 create table IF NOT EXISTS USERS
 (
-    USER_ID    LONG auto_increment
+    ID    LONG auto_increment
         primary key,
     USER_NAME  CHARACTER VARYING(50)  not null,
     USER_EMAIL CHARACTER VARYING(100) not null
@@ -16,19 +16,19 @@ create table IF NOT EXISTS USERS
 
 create table IF NOT EXISTS ITEMS
 (
-    ITEM_ID     LONG auto_increment primary key,
-    ITEM_NAME   CHARACTER VARYING(100) not null,
+    ID     LONG auto_increment primary key,
+    ITEM_NAME CHARACTER VARYING(100) not null,
     DESCRIPTION CHARACTER VARYING(500) not null,
     AVAILABLE   BOOLEAN                not null,
     OWNER_ID    LONG                   not null,
-    REQUEST     INTEGER,
+    REQUEST_ID     INTEGER,
     constraint ITEMS_USERS_USER_ID_FK
         foreign key (OWNER_ID) references USERS
 );
 
 create table IF NOT EXISTS BOOKINGS
 (
-    BOOKING_ID LONG auto_increment
+    ID LONG auto_increment
         primary key,
     START_DATE TIMESTAMP not null,
     END_DATE   TIMESTAMP not null,
@@ -43,7 +43,7 @@ create table IF NOT EXISTS BOOKINGS
 
 create table IF NOT EXISTS REQUEST
 (
-    REQUEST_ID   LONG auto_increment primary key,
+    ID   LONG auto_increment primary key,
     DESCRIPTION  CHARACTER VARYING(1000) not null,
     REQUESTOR_ID LONG                    not null,
     constraint REQUEST_USERS_USER_ID_FK
@@ -52,7 +52,7 @@ create table IF NOT EXISTS REQUEST
 
 create table IF NOT EXISTS COMMENTS
 (
-    COMMENT_ID LONG auto_increment primary key,
+    ID LONG auto_increment primary key,
     TEXT       CHARACTER VARYING(1000) not null,
     ITEM_ID    LONG                    not null,
     AUTHOR_ID  LONG                    not null,

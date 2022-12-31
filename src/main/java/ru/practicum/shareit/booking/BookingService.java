@@ -10,7 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingLastNextDto;
 import ru.practicum.shareit.booking.dto.TypeStatusDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.TypeStatus;
-import ru.practicum.shareit.item.ItemStorage;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.support.Validation;
@@ -29,7 +29,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final UserService userService;
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemStorage;
 
     public List<BookingDto> getBookings(long userID, TypeStatusDto status) { // метод получения данных о бронировании
         userService.getUserWithId(userID);
@@ -100,7 +100,7 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого бронирования не существует.");
         }
         Item item = getValidItem(booking.get().item.getId());
-        if ((userID == item.getOwner()) || (userID == booking.get().booker.getId())) {
+        if ((userID == item.getOwner().getId()) || (userID == booking.get().booker.getId())) {
             return bookingMapper.convertBookingToDto(booking.get());
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не является владельцем/забронировавшим данную вещь.");
@@ -109,7 +109,7 @@ public class BookingService {
     public BookingDto postBooking(long userId, BookingDto bookingDto) { // метод создания нового запроса на бронирование
         bookingDto.setBooker(userService.getUserWithId(userId));
         Item item = getValidItem(bookingDto.getItemId());
-        if (userId == item.getOwner()) {
+        if (userId == item.getOwner().getId()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не может бронировать свою вещь");
         }
         Validation.validationBooking(bookingDto);
@@ -134,7 +134,7 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "По этому бронированию уже дан ответ");
         }
         Item item = getValidItem(booking.get().item.getId());
-        if (userID != item.getOwner()) {
+        if (userID != item.getOwner().getId()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не является владельцем данной вещи.");
         }
         if (approved.equals("true")) {
@@ -182,7 +182,7 @@ public class BookingService {
     }
 
     private Item getValidItem(long itemId) {
-        Optional<Item> item = itemStorage.findItemById(itemId);
+        Optional<Item> item = itemStorage.findById(itemId);
         if (!item.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой вещи не существует.");
         }

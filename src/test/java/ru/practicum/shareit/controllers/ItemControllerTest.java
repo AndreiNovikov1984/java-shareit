@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class ItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserStorage userStorage;
+    private UserRepository userStorage;
 
     @Test
     void getItemsTest() throws Exception {
@@ -204,7 +204,7 @@ public class ItemControllerTest {
                 .name("Thing1Upd")
                 .description("Thing1 description_Upd")
                 .available(true)
-                .owner(1)
+                .owner(userStorage.findById(1L).get())
                 .build();
 
         mockMvc.perform(
@@ -224,7 +224,7 @@ public class ItemControllerTest {
                 .name("Thing1Upd")
                 .description("Thing1 description_Upd")
                 .available(true)
-                .owner(1)
+                .owner(userStorage.findById(1L).get())
                 .build();
 
         mockMvc.perform(
@@ -242,7 +242,7 @@ public class ItemControllerTest {
                 .name("Thing1Upd")
                 .description("Thing1 description_Upd")
                 .available(true)
-                .owner(1)
+                .owner(userStorage.findById(1L).get())
                 .build();
 
         mockMvc.perform(

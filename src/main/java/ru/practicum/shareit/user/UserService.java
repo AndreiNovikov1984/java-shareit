@@ -17,18 +17,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     public Collection<UserDto> getUsers() {             // метод получения списка пользователей
-        return userStorage.findAll().stream()
+        return userRepository.findAll().stream()
                 .map(userMapper::convertUserToDto)
                 .collect(Collectors.toList());
     }
 
     public UserDto getUserWithId(long userId) {         // метод получения пользователя по Id
         checkId(userId);
-        Optional<User> user = userStorage.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return userMapper.convertUserToDto(user.get());
         } else {
@@ -39,14 +39,14 @@ public class UserService {
     public UserDto postUser(UserDto userDto) {          // метод добавления пользователя
         User user = userMapper.convertDtoToUser(userDto);
         Validation.validationUser(user);
-        return userMapper.convertUserToDto(userStorage.save(user));
+        return userMapper.convertUserToDto(userRepository.save(user));
     }
 
     public UserDto patchUser(long userId, UserDto userDto) {        // метод обновления пользователя
         checkId(userId);
         User user = userMapper.convertDtoToUser(userDto);
         user.setId(userId);
-        Optional<User> userToUpdate = userStorage.findUserById(userId);
+        Optional<User> userToUpdate = userRepository.findById(userId);
         if (user.getName() == null) {
             user.setName(userToUpdate.get().getName());
         }
@@ -54,12 +54,12 @@ public class UserService {
             user.setEmail(userToUpdate.get().getEmail());
         }
         Validation.validationUser(user);
-        return userMapper.convertUserToDto(userStorage.save(user));
+        return userMapper.convertUserToDto(userRepository.save(user));
     }
 
     public void deleteUser(long userId) {                       // метод удаления пользователя
         checkId(userId);
-        userStorage.deleteById(userId);
+        userRepository.deleteById(userId);
     }
 
     private void checkId(long userId) {
