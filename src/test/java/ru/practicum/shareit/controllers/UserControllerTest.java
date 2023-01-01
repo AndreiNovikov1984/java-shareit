@@ -7,9 +7,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -20,44 +21,35 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+//@WebMvcTest(controllers = UserControllerTest.class)
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = {"file:src/test/resources/schema.sql",
+        "file:src/test/resources/test.sql"})
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserStorage userStorage;
+    private UserRepository userStorage;
 
 
     @Test
     void getAllUsersTest() throws Exception {
-        User user = User.builder()
-                .name("Ivan")
-                .email("van@ya.com")
-                .build();
-        userStorage.addUser(user);
-
         mockMvc.perform(
                         get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(1)));
+                .andExpect(jsonPath("$.*", hasSize(3)));
     }
 
     @Test
     void getUserByIdTest() throws Exception {
-        User user = User.builder()
-                .name("Ivan")
-                .email("van@ya.com")
-                .build();
-        long id = userStorage.addUser(user).getId();
-
         mockMvc.perform(
-                        get("/users/" + id))
+                        get("/users/" + 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Ivan"))
-                .andExpect(jsonPath("$.email").value("van@ya.com"));
+                .andExpect(jsonPath("$.name").value("Ivan1"))
+                .andExpect(jsonPath("$.email").value("ivan1@mail.ru"));
     }
 
     @Test
@@ -135,7 +127,7 @@ public class UserControllerTest {
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long id = userStorage.addUser(user).getId();
+        long id = userStorage.save(user).getId();
 
         user.setName("Ivan2");
         user.setEmail("van@ya2.com");
@@ -156,7 +148,7 @@ public class UserControllerTest {
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long id = userStorage.addUser(user).getId();
+        long id = userStorage.save(user).getId();
 
         mockMvc.perform(
                         delete("/users/" + id))

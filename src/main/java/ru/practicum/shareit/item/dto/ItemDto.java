@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingLastNextDto;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public class ItemDto {
     private String description;
     private Boolean available;
     private long request;
-    private List<String> itemFeedback;
+    private List<CommentDto> comments;
+    private BookingLastNextDto lastBooking;
+    private BookingLastNextDto nextBooking;
 }

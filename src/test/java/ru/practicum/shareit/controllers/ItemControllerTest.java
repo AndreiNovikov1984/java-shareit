@@ -7,13 +7,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+
+import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,80 +26,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = {"file:src/test/resources/schema.sql",
+        "file:src/test/resources/test.sql"})
 public class ItemControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private ItemStorage itemStorage;
-    @Autowired
-    private UserStorage userStorage;
+    private UserRepository userStorage;
 
     @Test
     void getItemsTest() throws Exception {
-        Item item = Item.builder()
-                .id(1)
-                .name("Молоток")
-                .description("Хороший молоток")
-                .available(true)
-                .itemOwnerId(1)
-                .build();
-        long id = itemStorage.addItem(item).getId();
 
         mockMvc.perform(
                         get("/items")
-                                .header("X-Sharer-User-Id", id))
+                                .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)));
     }
 
     @Test
     void getItemByIdTest() throws Exception {
-        Item item = Item.builder()
-                .id(1)
-                .name("Молоток")
-                .description("Хороший молоток")
-                .available(true)
-                .itemOwnerId(1)
-                .build();
-        long id = itemStorage.addItem(item).getId();
 
         mockMvc.perform(
-                        get("/items/" + id))
+                        get("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Молоток"))
-                .andExpect(jsonPath("$.description").value("Хороший молоток"));
+                .andExpect(jsonPath("$.name").value("Thing1"))
+                .andExpect(jsonPath("$.description").value("Thing1 description"));
     }
 
     @Test
     void searchItemTest() throws Exception {
-        Item item = Item.builder()
-                .id(1)
-                .name("Молоток")
-                .description("Хороший молоток")
-                .available(true)
-                .itemOwnerId(1)
-                .build();
-        long id = itemStorage.addItem(item).getId();
-
         mockMvc.perform(
-                        get("/items/search?text=Молоток"))
+                        get("/items/search?text=Thing1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)));
     }
 
     @Test
     void searchItemEmptyTest() throws Exception {
-        Item item = Item.builder()
-                .id(1)
-                .name("Молоток")
-                .description("Хороший молоток")
-                .available(true)
-                .itemOwnerId(1)
-                .build();
-        long id = itemStorage.addItem(item).getId();
-
         mockMvc.perform(
                         get("/items/search?text="))
                 .andExpect(status().isOk())
@@ -111,13 +81,15 @@ public class ItemControllerTest {
                 .name("Молоток")
                 .description("Хороший молоток")
                 .available(true)
+                .comments(new ArrayList<>())
                 .build();
 
         User user = User.builder()
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long userId = userStorage.addUser(user).getId();
+        long userId = userStorage.save(user).getId();
+
 
         mockMvc.perform(
                         post("/items")
@@ -127,6 +99,7 @@ public class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Молоток"))
                 .andExpect(jsonPath("$.description").value("Хороший молоток"));
+
     }
 
     @Test
@@ -136,11 +109,12 @@ public class ItemControllerTest {
                 .name("Молоток")
                 .description("Хороший молоток")
                 .available(true)
+                .comments(new ArrayList<>())
                 .build();
 
         mockMvc.perform(
                         post("/items")
-                                .header("X-Sharer-User-Id", 1)
+                                .header("X-Sharer-User-Id", 4)
                                 .content(objectMapper.writeValueAsString(itemDto))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -158,7 +132,7 @@ public class ItemControllerTest {
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long userId = userStorage.addUser(user).getId();
+        long userId = userStorage.save(user).getId();
 
         mockMvc.perform(
                         post("/items")
@@ -184,7 +158,7 @@ public class ItemControllerTest {
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long userId = userStorage.addUser(user).getId();
+        long userId = userStorage.save(user).getId();
 
         mockMvc.perform(
                         post("/items")
@@ -209,7 +183,7 @@ public class ItemControllerTest {
                 .name("Ivan")
                 .email("van@ya.com")
                 .build();
-        long userId = userStorage.addUser(user).getId();
+        long userId = userStorage.save(user).getId();
 
         mockMvc.perform(
                         post("/items")
@@ -225,46 +199,37 @@ public class ItemControllerTest {
 
     @Test
     void patchItemsTest() throws Exception {
-        User user = User.builder()
-                .name("Ivan")
-                .email("van@ya.com")
-                .build();
-        long userId = userStorage.addUser(user).getId();
-
         Item item = Item.builder()
-                .name("Молоток")
-                .description("Хороший молоток")
+                .id(1)
+                .name("Thing1Upd")
+                .description("Thing1 description_Upd")
                 .available(true)
-                .itemOwnerId(userId)
+                .owner(userStorage.findById(1L).get())
                 .build();
-        long id = itemStorage.addItem(item).getId();
-
-        item.setName("Молот");
-        item.setDescription("Хороший молот");
 
         mockMvc.perform(
-                        patch("/items/" + id)
-                                .header("X-Sharer-User-Id", userId)
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
                                 .content(objectMapper.writeValueAsString(item))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Молот"))
-                .andExpect(jsonPath("$.description").value("Хороший молот"));
+                .andExpect(jsonPath("$.name").value("Thing1Upd"))
+                .andExpect(jsonPath("$.description").value("Thing1 description_Upd"));
     }
 
     @Test
     void patchItemsWithoutUserTest() throws Exception {
         Item item = Item.builder()
-                .name("Молоток")
-                .description("Хороший молоток")
+                .id(1)
+                .name("Thing1Upd")
+                .description("Thing1 description_Upd")
                 .available(true)
-                .itemOwnerId(1)
+                .owner(userStorage.findById(1L).get())
                 .build();
-        long id = itemStorage.addItem(item).getId();
 
         mockMvc.perform(
-                        patch("/items/" + id)
-                                .header("X-Sharer-User-Id", 1)
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 4)
                                 .content(objectMapper.writeValueAsString(item))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -272,28 +237,17 @@ public class ItemControllerTest {
 
     @Test
     void patchItemsWithIncorrectUserIdTest() throws Exception {
-        User user1 = User.builder()
-                .name("Ivan")
-                .email("van@ya.com")
-                .build();
-        long userId1 = userStorage.addUser(user1).getId();
-        User user2 = User.builder()
-                .name("Ivan2")
-                .email("van@ya2.com")
-                .build();
-        long userId2 = userStorage.addUser(user2).getId();
-
         Item item = Item.builder()
-                .name("Молоток")
-                .description("Хороший молоток")
+                .id(1)
+                .name("Thing1Upd")
+                .description("Thing1 description_Upd")
                 .available(true)
-                .itemOwnerId(userId1)
+                .owner(userStorage.findById(1L).get())
                 .build();
-        long id = itemStorage.addItem(item).getId();
 
         mockMvc.perform(
-                        patch("/items/" + id)
-                                .header("X-Sharer-User-Id", userId2)
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 2)
                                 .content(objectMapper.writeValueAsString(item))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -302,5 +256,4 @@ public class ItemControllerTest {
                 .andExpect(result -> assertEquals("404 NOT_FOUND \"Пользователь не является владельцем данной вещи.\"",
                         result.getResponse().getContentAsString()));
     }
-
 }

@@ -10,42 +10,56 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     public Collection<UserDto> getUsers() {             // метод получения списка пользователей
-        return userStorage.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(userMapper::convertUserToDto)
                 .collect(Collectors.toList());
     }
 
     public UserDto getUserWithId(long userId) {         // метод получения пользователя по Id
         checkId(userId);
-        return userMapper.convertUserToDto(userStorage.getUserById(userId));
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            return userMapper.convertUserToDto(user.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id пользователя. Попробуйте еще раз.");
+        }
     }
 
     public UserDto postUser(UserDto userDto) {          // метод добавления пользователя
         User user = userMapper.convertDtoToUser(userDto);
         Validation.validationUser(user);
-        return userMapper.convertUserToDto(userStorage.addUser(user));
+        return userMapper.convertUserToDto(userRepository.save(user));
     }
 
     public UserDto patchUser(long userId, UserDto userDto) {        // метод обновления пользователя
         checkId(userId);
         User user = userMapper.convertDtoToUser(userDto);
         user.setId(userId);
-        return userMapper.convertUserToDto(userStorage.updateUser(user));
+        Optional<User> userToUpdate = userRepository.findById(userId);
+        if (user.getName() == null) {
+            user.setName(userToUpdate.get().getName());
+        }
+        if (user.getEmail() == null) {
+            user.setEmail(userToUpdate.get().getEmail());
+        }
+        Validation.validationUser(user);
+        return userMapper.convertUserToDto(userRepository.save(user));
     }
 
-    public User deleteUser(long userId) {                       // метод удаления пользователя
+    public void deleteUser(long userId) {                       // метод удаления пользователя
         checkId(userId);
-       return userStorage.deleteUserById(userId);
+        userRepository.deleteById(userId);
     }
 
     private void checkId(long userId) {
