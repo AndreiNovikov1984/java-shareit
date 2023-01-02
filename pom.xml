@@ -180,6 +180,7 @@
 							<configuration>
 								<excludes>
 									<exclude>**/*BookingMapperImpl.*</exclude>
+									<exclude>**/*TypeStatusMapperImpl.*</exclude>
 									<exclude>**/*ItemMapperImpl.*</exclude>
 									<exclude>**/*UserMapperImpl.*</exclude>
 									<exclude>**/*CommentMapperImpl.*</exclude>

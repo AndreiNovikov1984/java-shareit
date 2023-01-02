@@ -10,6 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -194,6 +195,42 @@ public class ItemControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException()
                         instanceof ResponseStatusException))
                 .andExpect(result -> assertEquals("400 BAD_REQUEST \"Поле доступности должно быть заполнено.\"",
+                        result.getResponse().getContentAsString()));
+    }
+
+    @Test
+    void postCommentTest() throws Exception {
+        CommentDto commentDto = CommentDto.builder()
+                .text("Thing awesome")
+                .itemId(1)
+                .build();
+
+        mockMvc.perform(
+                        post("/items/1/comment")
+                                .header("X-Sharer-User-Id", 2)
+                                .content(objectMapper.writeValueAsString(commentDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value("Thing awesome"))
+                .andExpect(jsonPath("$.itemId").value(1));
+    }
+
+    @Test
+    void postCommentIncorrectUserTest() throws Exception {
+        CommentDto commentDto = CommentDto.builder()
+                .text("Thing awesome")
+                .itemId(1)
+                .build();
+
+        mockMvc.perform(
+                        post("/items/1/comment")
+                                .header("X-Sharer-User-Id", 3)
+                                .content(objectMapper.writeValueAsString(commentDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException()
+                        instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals("400 BAD_REQUEST \"Нельзя добавить комментарий к данной вещи\"",
                         result.getResponse().getContentAsString()));
     }
 

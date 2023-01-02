@@ -40,6 +40,106 @@ public class BookingControllerTest {
     }
 
     @Test
+    void getBookingsStateCurrentTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=CURRENT")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getBookingsStatePastTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=PAST")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(2)));
+    }
+
+    @Test
+    void getBookingsStateFutureTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=FUTURE")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getBookingsStateWaitingTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=WAITING")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)));
+    }
+
+    @Test
+    void getBookingsStateRejectedTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=REJECTED")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateCurrentTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=CURRENT")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStatePastTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=PAST")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)));
+    }
+
+    @Test
+    void getOwnerBookingsStateFutureTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=FUTURE")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateWaitingTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=WAITING")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateRejectiongTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=REJECTED")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
     void getOwnerBookingsTest() throws Exception {
 
         mockMvc.perform(

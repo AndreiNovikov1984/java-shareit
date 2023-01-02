@@ -56,13 +56,13 @@ public class Validation {
     public static void validationBooking(BookingDto booking) {
         if ((booking.getStart().isAfter(booking.getEnd())) || (booking.getStart().isBefore(LocalDateTime.now()))
                 || (booking.getEnd().isBefore(LocalDateTime.now()))) {
-            log.warn("Ошибка в email - {}", booking.getId());
+            log.warn("Ошибка в booking - {}", booking.getId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Данные бронирования не корректны. Попробуйте еще раз.");
         }
     }
 
     public static void validationComment(Comment comment) {
-        if ((comment == null) || (comment.getText().equals("null")) ||
+        if ((comment.getText() == null) || (comment.getText().equals("null")) ||
                 (comment.getText().equals(""))) {
             log.warn("Ошибка в комменте - {}", comment.getId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный комментарий пустой");
@@ -70,8 +70,8 @@ public class Validation {
     }
 
     public static void validationItemRequest(ItemRequestDto itemRequestDto) {
-        if ((itemRequestDto == null) || (itemRequestDto.getDescription() == null) ||
-                (itemRequestDto.getDescription().equals("null")) || (itemRequestDto.getDescription().equals(""))) {
+        if ((itemRequestDto.getDescription() == null) || (itemRequestDto.getDescription().equals("null")) ||
+                (itemRequestDto.getDescription().equals(""))) {
             log.warn("Ошибка в запросе - {}", itemRequestDto.getId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный запрос пустой");
         }
