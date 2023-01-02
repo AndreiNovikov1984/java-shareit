@@ -2,6 +2,10 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,27 +35,30 @@ public class BookingService {
     private final UserService userService;
     private final ItemRepository itemStorage;
 
-    public List<BookingDto> getBookings(long userID, TypeStatusDto status) { // метод получения данных о бронировании
+    public List<BookingDto> getBookings(long userID, TypeStatusDto status, int from, int size) { // метод получения данных о бронировании
+        checkPage(from, size);
         userService.getUserWithId(userID);
-        List<Booking> bookingList;
+        Page<Booking> bookingList;
+        Sort sortById = Sort.by(Sort.Direction.ASC, "start");
+        Pageable page = PageRequest.of((from / size), size, sortById);
         switch (status) {
             case ALL:
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userID);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userID, page);
                 break;
             case CURRENT:
-                bookingList = bookingRepository.findCurrentByBooker(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findCurrentByBooker(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case PAST:
-                bookingList = bookingRepository.findPastByBooker(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findPastByBooker(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findFutureByBooker(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findFutureByBooker(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userID, TypeStatus.WAITING);
+                bookingList = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userID, TypeStatus.WAITING, page);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userID, TypeStatus.REJECTED);
+                bookingList = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userID, TypeStatus.REJECTED, page);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого статуса не существует");
@@ -61,27 +68,30 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDto> getOwnerBookings(long userID, TypeStatusDto status) { // метод получения данных о бронированиях всех вещей пользователя
+    public List<BookingDto> getOwnerBookings(long userID, TypeStatusDto status, int from, int size) { // метод получения данных о бронированиях всех вещей пользователя
+        checkPage(from, size);
         userService.getUserWithId(userID);
-        List<Booking> bookingList;
+        Page<Booking> bookingList;
+        Sort sortById = Sort.by(Sort.Direction.ASC, "start");
+        Pageable page = PageRequest.of((from / size), size, sortById);
         switch (status) {
             case ALL:
-                bookingList = bookingRepository.findAllByOwnerOrderByStartDesc(userID);
+                bookingList = bookingRepository.findAllByOwnerOrderByStartDesc(userID, page);
                 break;
             case CURRENT:
-                bookingList = bookingRepository.findCurrentByOwner(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findCurrentByOwner(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case PAST:
-                bookingList = bookingRepository.findPastByOwner(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findPastByOwner(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findFutureByOwner(userID, Timestamp.valueOf(LocalDateTime.now()));
+                bookingList = bookingRepository.findFutureByOwner(userID, Timestamp.valueOf(LocalDateTime.now()), page);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByOwnerAndStatusOrderByStartDesc(userID, TypeStatus.WAITING);
+                bookingList = bookingRepository.findAllByOwnerAndStatusOrderByStartDesc(userID, TypeStatus.WAITING, page);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByOwnerAndStatusOrderByStartDesc(userID, TypeStatus.REJECTED);
+                bookingList = bookingRepository.findAllByOwnerAndStatusOrderByStartDesc(userID, TypeStatus.REJECTED, page);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого статуса не существует");
@@ -168,11 +178,7 @@ public class BookingService {
 
     public boolean validateBookingOfCommentors(Long itemId, long userID) {
         Optional<Booking> booking = bookingRepository.findBokingByItemAndOwnerValidate(itemId, userID, Timestamp.valueOf(LocalDateTime.now()));
-        if (booking.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return booking.isPresent();
     }
 
     private void checkId(long id) {
@@ -187,5 +193,11 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой вещи не существует.");
         }
         return item.get();
+    }
+
+    private void checkPage(int from, int size) {
+        if ((from < 0) || (size < 0)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Некорректный индекс пагинации. Попробуйте еще раз.");
+        }
     }
 }

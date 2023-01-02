@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -65,6 +66,14 @@ public class Validation {
                 (comment.getText().equals(""))) {
             log.warn("Ошибка в комменте - {}", comment.getId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный комментарий пустой");
+        }
+    }
+
+    public static void validationItemRequest(ItemRequestDto itemRequestDto) {
+        if ((itemRequestDto == null) || (itemRequestDto.getDescription() == null) ||
+                (itemRequestDto.getDescription().equals("null")) || (itemRequestDto.getDescription().equals(""))) {
+            log.warn("Ошибка в запросе - {}", itemRequestDto.getId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный запрос пустой");
         }
     }
 }

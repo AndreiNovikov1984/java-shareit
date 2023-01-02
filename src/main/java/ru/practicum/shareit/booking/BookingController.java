@@ -20,14 +20,18 @@ public class BookingController {
 
     @GetMapping                                              // метод данных о всех бронированиях пользователя
     public ResponseEntity<List<BookingDto>> getBookings(@RequestHeader("X-Sharer-User-Id") long userID,
-                                                        @RequestParam(defaultValue = "ALL") TypeStatusDto state) {
-        return new ResponseEntity<>(bookingService.getBookings(userID, state), HttpStatus.OK);
+                                                        @RequestParam(defaultValue = "ALL") TypeStatusDto state,
+                                                        @RequestParam(defaultValue = "0") int from,
+                                                        @RequestParam(defaultValue = "20") int size) {
+        return new ResponseEntity<>(bookingService.getBookings(userID, state, from, size), HttpStatus.OK);
     }
 
     @GetMapping("/owner")                 // метод получения данных о бронированиях всех вещей пользователя
     public ResponseEntity<List<BookingDto>> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") long userID,
-                                                             @RequestParam(defaultValue = "ALL") TypeStatusDto state) {
-        return new ResponseEntity<>(bookingService.getOwnerBookings(userID, state), HttpStatus.OK);
+                                                             @RequestParam(defaultValue = "ALL") TypeStatusDto state,
+                                                             @RequestParam(defaultValue = "0") int from,
+                                                             @RequestParam(defaultValue = "20") int size) {
+        return new ResponseEntity<>(bookingService.getOwnerBookings(userID, state, from, size), HttpStatus.OK);
     }
 
     @GetMapping({"/{id}"})                                      // метод получения данных о бронировании

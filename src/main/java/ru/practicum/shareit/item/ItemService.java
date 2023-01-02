@@ -2,6 +2,9 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,9 +35,12 @@ public class ItemService {
     private final CommentMapper commentMapper;
     private final BookingService bookingService;
 
-    public Collection<ItemDto> getItems(long userId) {        // метод получения списка вещей по ID пользователя
+    public Collection<ItemDto> getItems(long userId, int from, int size) {        // метод получения списка вещей по ID пользователя
         checkId(userId);
-        return itemRepository.findAllByOwnerId(userId).stream()
+        checkPage(from, size);
+        Sort sortById = Sort.by(Sort.Direction.ASC, "id");
+        Pageable page = PageRequest.of((from / size), size, sortById);
+        return itemRepository.findAllByOwnerId(userId, page).stream()
                 .map(itemMapper::convertItemToDto)
                 .map(this::getLastAndNextBooking)
                 .map(this::getCommentForItem)
@@ -58,11 +64,14 @@ public class ItemService {
         }
     }
 
-    public Collection<ItemDto> search(String text) {                            // метод поиска вещи
+    public Collection<ItemDto> search(String text, int from, int size) {                            // метод поиска вещи
+        checkPage(from, size);
         if ((text == null) || (text.equals(""))) {
             return new ArrayList<>();
         } else {
-            return itemRepository.searchItem(text).stream()
+            Sort sortById = Sort.by(Sort.Direction.ASC, "id");
+            Pageable page = PageRequest.of((from / size), size, sortById);
+            return itemRepository.searchItem(text, page).stream()
                     .map(itemMapper::convertItemToDto)
                     .collect(Collectors.toList());
         }
@@ -155,6 +164,12 @@ public class ItemService {
     private void checkId(long id) {
         if ((id < 0) || (id == 0)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id. Попробуйте еще раз.");
+        }
+    }
+
+    private void checkPage(int from, int size) {
+        if ((from < 0) || (size < 0)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Некорректный индекс пагинации. Попробуйте еще раз.");
         }
     }
 }
