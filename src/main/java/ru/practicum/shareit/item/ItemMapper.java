@@ -17,10 +17,4 @@ public interface ItemMapper {
 
     @Mapping(source = "owner.id", target = "ownerId")
     ItemAnswerDto convertItemToAnswerDto(Item item);             // метод преобразования Item в ItemAnswerDto
-
-    @Mapping(target = "owner", ignore = true)
-    Item convertAnswerDtoToItem(ItemAnswerDto itemAnswerDto);             // метод преобразования ItemAnswerDto в Item
-
-
-
 }

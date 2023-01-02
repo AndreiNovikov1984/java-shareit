@@ -33,8 +33,6 @@ public class ItemRequestControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private ItemRequestRepository itemRequestRepository;
 
     @Test
     void getAllItemRequestsTest() throws Exception {
@@ -89,6 +87,15 @@ public class ItemRequestControllerTest {
     }
 
     @Test
+    void getAllRequestsEmptyTest() throws Exception {
+        mockMvc.perform(
+                        get("/requests/all?from=2&size=1")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
     void postRequestTest() throws Exception {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .description("Thing needed")
@@ -105,5 +112,19 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.description").value("Thing needed"));
     }
 
+    @Test
+    void postRequestIncorrectTest() throws Exception {
+        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+                .description("Thing needed")
+                .created(LocalDateTime.now())
+                .build();
+
+        mockMvc.perform(
+                        post("/requests")
+                                .header("X-Sharer-User-Id", 100)
+                                .content(objectMapper.writeValueAsString(itemRequestDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
 }

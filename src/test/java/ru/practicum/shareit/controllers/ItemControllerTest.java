@@ -255,6 +255,40 @@ public class ItemControllerTest {
     }
 
     @Test
+    void patchItemsOnlyNameTest() throws Exception {
+        Item item = Item.builder()
+                .name("Thing1Upd")
+                .owner(userStorage.findById(1L).get())
+                .build();
+
+        mockMvc.perform(
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(item))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Thing1Upd"))
+                .andExpect(jsonPath("$.description").value("Thing1 description"));
+    }
+
+    @Test
+    void patchItemsOnlyDescriptionTest() throws Exception {
+        Item item = Item.builder()
+                .description("Thing1 description_Upd")
+                .owner(userStorage.findById(1L).get())
+                .build();
+
+        mockMvc.perform(
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(item))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Thing1"))
+                .andExpect(jsonPath("$.description").value("Thing1 description_Upd"));
+    }
+
+    @Test
     void patchItemsWithoutUserTest() throws Exception {
         Item item = Item.builder()
                 .id(1)

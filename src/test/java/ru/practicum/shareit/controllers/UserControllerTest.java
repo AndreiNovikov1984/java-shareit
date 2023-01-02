@@ -142,6 +142,44 @@ public class UserControllerTest {
     }
 
     @Test
+    void patchUserOnlyNameTest() throws Exception {
+        User user = User.builder()
+                .name("Ivan")
+                .email("van@ya.com")
+                .build();
+        long id = userStorage.save(user).getId();
+
+        user.setName("Ivan2");
+
+        mockMvc.perform(
+                        patch("/users/" + id)
+                                .content(objectMapper.writeValueAsString(user))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Ivan2"))
+                .andExpect(jsonPath("$.email").value("van@ya.com"));
+    }
+
+    @Test
+    void patchUserOnlyEmailTest() throws Exception {
+        User user = User.builder()
+                .name("Ivan")
+                .email("van@ya.com")
+                .build();
+        long id = userStorage.save(user).getId();
+
+        user.setEmail("van@ya2.com");
+
+        mockMvc.perform(
+                        patch("/users/" + id)
+                                .content(objectMapper.writeValueAsString(user))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Ivan"))
+                .andExpect(jsonPath("$.email").value("van@ya2.com"));
+    }
+
+    @Test
     void deleteUserTest() throws Exception {
         User user = User.builder()
                 .name("Ivan")

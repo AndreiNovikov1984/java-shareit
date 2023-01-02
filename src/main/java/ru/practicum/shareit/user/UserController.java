@@ -20,17 +20,13 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getUsers() {                 // метод получения списка пользователей
         Collection<UserDto> users = userService.getUsers();
-        return users != null && !users.isEmpty()
-                ? new ResponseEntity<>(users, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {         // метод получения пользователя по Id
         UserDto userdto = userService.getUserWithId(id);
-        return userdto != null
-                ? new ResponseEntity<>(userdto, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userdto, HttpStatus.OK);
     }
 
     @PostMapping

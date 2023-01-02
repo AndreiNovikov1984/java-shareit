@@ -14,8 +14,5 @@ public interface ItemRequestMapper {
     ItemRequest convertDtoToItemRequest(ItemRequestDto itemRequestDto);        // метод преобразования ItemRequestDto в ItemRequest
 
     ItemRequestAnswerDto convertItemRequestToAnswerDto(ItemRequest itemRequest);             // метод преобразования ItemRequest в ItemRequestAnswerDto
-
-    @Mapping(target = "requestor", ignore = true)
-    ItemRequest convertAnswerDtoToItemRequest(ItemRequestAnswerDto itemRequestDto);        // метод преобразования ItemRequestAnswerDto в ItemRequest
 }
 
