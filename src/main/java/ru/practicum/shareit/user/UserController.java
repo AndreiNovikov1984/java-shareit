@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")                                     // метод удаления пользователя
-    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
