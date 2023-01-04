@@ -76,4 +76,5 @@ public class Validation {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Переданный запрос пустой");
         }
     }
+
 }

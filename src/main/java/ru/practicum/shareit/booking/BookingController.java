@@ -35,18 +35,21 @@ public class BookingController {
     }
 
     @GetMapping({"/{id}"})                                      // метод получения данных о бронировании
-    public ResponseEntity<BookingDto> getBooking(@RequestHeader("X-Sharer-User-Id") long userID, @PathVariable long id) {
+    public ResponseEntity<BookingDto> getBooking(@RequestHeader("X-Sharer-User-Id") long userID,
+                                                 @PathVariable long id) {
         return new ResponseEntity<>(bookingService.getBooking(userID, id), HttpStatus.OK);
     }
 
     @PostMapping                                        // метод создания нового запроса на бронирование
-    public ResponseEntity<BookingDto> postBooking(@RequestHeader("X-Sharer-User-Id") long userID, @RequestBody BookingDto bookingDto) {
+    public ResponseEntity<BookingDto> postBooking(@RequestHeader("X-Sharer-User-Id") long userID,
+                                                  @RequestBody BookingDto bookingDto) {
         return new ResponseEntity<>(bookingService.postBooking(userID, bookingDto), HttpStatus.OK);
     }
 
     @PatchMapping({"/{id}"})        // метод подтверждения/отклонения запроса на бронирование
-    public ResponseEntity<BookingDto> patchBooking(@RequestHeader("X-Sharer-User-Id") long userID, @RequestParam String approved, @PathVariable long id) {
+    public ResponseEntity<BookingDto> patchBooking(@RequestHeader("X-Sharer-User-Id") long userID,
+                                                   @RequestParam String approved,
+                                                   @PathVariable long id) {
         return new ResponseEntity<>(bookingService.patchbooking(userID, approved, id), HttpStatus.OK);
     }
-
 }

@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemAnswerDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestAnswerDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.support.Validation;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
@@ -106,4 +107,5 @@ public class ItemRequestService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Некорректный индекс пагинации. Попробуйте еще раз.");
         }
     }
+
 }

@@ -35,7 +35,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")                                  // метод обновления пользователя
-    public ResponseEntity<UserDto> patchUser(@PathVariable long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> patchUser(@PathVariable long id,
+                                             @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.patchUser(id, userDto), HttpStatus.OK);
     }
 

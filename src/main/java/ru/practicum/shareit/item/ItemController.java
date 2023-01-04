@@ -50,13 +50,15 @@ public class ItemController {
 
     @PostMapping("/{id}/comment")                                        // метод создания новой вещи
     public ResponseEntity<CommentDto> postComment(@RequestHeader("X-Sharer-User-Id") long userID,
-                                                  @PathVariable long id, @RequestBody CommentDto commentDto) {
+                                                  @PathVariable long id,
+                                                  @RequestBody CommentDto commentDto) {
         return new ResponseEntity<>(itemService.postComment(userID, id, commentMapper.convertDtoToComment(commentDto)), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")                              // метод обновления вещи
     public ResponseEntity<ItemDto> patchItem(@RequestHeader("X-Sharer-User-Id") long userID,
-                                             @PathVariable long id, @RequestBody ItemDto itemDto) {
+                                             @PathVariable long id,
+                                             @RequestBody ItemDto itemDto) {
         return new ResponseEntity<>(itemService.patchItem(userID, id, itemDto), HttpStatus.OK);
     }
 }

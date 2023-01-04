@@ -200,4 +200,5 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Некорректный индекс пагинации. Попробуйте еще раз.");
         }
     }
+
 }
