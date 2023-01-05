@@ -19,14 +19,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getUsers() {                 // метод получения списка пользователей
-        Collection<UserDto> users = userService.getUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {         // метод получения пользователя по Id
-        UserDto userdto = userService.getUserWithId(id);
-        return new ResponseEntity<>(userdto, HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserWithId(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -41,8 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")                                     // метод удаления пользователя
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable long id) {
+    public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

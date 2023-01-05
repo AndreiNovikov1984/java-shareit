@@ -25,14 +25,12 @@ public class ItemController {
     public ResponseEntity<Collection<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
                                                         @RequestParam(defaultValue = "0") int from,
                                                         @RequestParam(defaultValue = "20") int size) {
-        Collection<ItemDto> items = itemService.getItems(userId, from, size);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        return new ResponseEntity<>(itemService.getItems(userId, from, size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")                                // метод получения вещи по Id
     public ResponseEntity<ItemDto> getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long id) {
-        ItemDto itemResponce = itemService.getItem(userId, id);
-        return new ResponseEntity<>(itemResponce, HttpStatus.OK);
+        return new ResponseEntity<>(itemService.getItem(userId, id), HttpStatus.OK);
     }
 
     @GetMapping("/search")                              // метод поиска вещи

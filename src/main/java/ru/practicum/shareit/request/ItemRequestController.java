@@ -22,31 +22,25 @@ public class ItemRequestController {
 
     @GetMapping                                                 // метод получения списка вещей по ID пользователя
     public ResponseEntity<Collection<ItemRequestAnswerDto>> getRequests(@RequestHeader("X-Sharer-User-Id") long userId) {
-        Collection<ItemRequestAnswerDto> itemRequestDtoUpd = itemRequestService.getRequests(userId);
-        return new ResponseEntity<>(itemRequestDtoUpd, HttpStatus.OK);
+        return new ResponseEntity<>(itemRequestService.getRequests(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/{requestId}")
-    // метод получения списка вещей по ID пользователя
+    @GetMapping("/{requestId}")                             // метод получения списка вещей по ID пользователя
     public ResponseEntity<ItemRequestAnswerDto> getRequest(@RequestHeader("X-Sharer-User-Id") long userId,
                                                            @PathVariable long requestId) {
-        ItemRequestAnswerDto itemRequestDtoUpd = itemRequestService.getRequest(userId, requestId);
-        return new ResponseEntity<>(itemRequestDtoUpd, HttpStatus.OK);
+        return new ResponseEntity<>(itemRequestService.getRequest(userId, requestId), HttpStatus.OK);
     }
 
     @GetMapping("/all")                                   // метод получения списка вещей по ID пользователя
     public ResponseEntity<Collection<ItemRequestAnswerDto>> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
                                                                            @RequestParam(defaultValue = "0") int from,
                                                                            @RequestParam(defaultValue = "20") int size) {
-        Collection<ItemRequestAnswerDto> itemRequestDtoUpd = itemRequestService.getAllRequests(userId, from, size);
-        return new ResponseEntity<>(itemRequestDtoUpd, HttpStatus.OK);
+        return new ResponseEntity<>(itemRequestService.getAllRequests(userId, from, size), HttpStatus.OK);
     }
 
     @PostMapping                                        // метод создания нового запроса на вещь
     public ResponseEntity<ItemRequestDto> postRequest(@RequestHeader("X-Sharer-User-Id") long userID,
                                                       @RequestBody ItemRequestDto itemRequestDto) {
-        ItemRequestDto itemRequestDtoUpd = itemRequestService.postRequest(userID, itemRequestDto);
-        return new ResponseEntity<>(itemRequestDtoUpd, HttpStatus.OK);
+        return new ResponseEntity<>(itemRequestService.postRequest(userID, itemRequestDto), HttpStatus.OK);
     }
-
 }
