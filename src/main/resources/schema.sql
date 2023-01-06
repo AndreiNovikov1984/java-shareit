@@ -46,6 +46,7 @@ create table IF NOT EXISTS REQUEST
     ID   LONG auto_increment primary key,
     DESCRIPTION  CHARACTER VARYING(1000) not null,
     REQUESTOR_ID LONG                    not null,
+    CREATED    DATETIME                not null,
     constraint REQUEST_USERS_USER_ID_FK
         foreign key (REQUESTOR_ID) references USERS
 );

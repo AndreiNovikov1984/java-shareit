@@ -10,6 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -198,6 +199,42 @@ public class ItemControllerTest {
     }
 
     @Test
+    void postCommentTest() throws Exception {
+        CommentDto commentDto = CommentDto.builder()
+                .text("Thing awesome")
+                .itemId(1)
+                .build();
+
+        mockMvc.perform(
+                        post("/items/1/comment")
+                                .header("X-Sharer-User-Id", 2)
+                                .content(objectMapper.writeValueAsString(commentDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value("Thing awesome"))
+                .andExpect(jsonPath("$.itemId").value(1));
+    }
+
+    @Test
+    void postCommentIncorrectUserTest() throws Exception {
+        CommentDto commentDto = CommentDto.builder()
+                .text("Thing awesome")
+                .itemId(1)
+                .build();
+
+        mockMvc.perform(
+                        post("/items/1/comment")
+                                .header("X-Sharer-User-Id", 3)
+                                .content(objectMapper.writeValueAsString(commentDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException()
+                        instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals("400 BAD_REQUEST \"Нельзя добавить комментарий к данной вещи\"",
+                        result.getResponse().getContentAsString()));
+    }
+
+    @Test
     void patchItemsTest() throws Exception {
         Item item = Item.builder()
                 .id(1)
@@ -214,6 +251,40 @@ public class ItemControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Thing1Upd"))
+                .andExpect(jsonPath("$.description").value("Thing1 description_Upd"));
+    }
+
+    @Test
+    void patchItemsOnlyNameTest() throws Exception {
+        Item item = Item.builder()
+                .name("Thing1Upd")
+                .owner(userStorage.findById(1L).get())
+                .build();
+
+        mockMvc.perform(
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(item))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Thing1Upd"))
+                .andExpect(jsonPath("$.description").value("Thing1 description"));
+    }
+
+    @Test
+    void patchItemsOnlyDescriptionTest() throws Exception {
+        Item item = Item.builder()
+                .description("Thing1 description_Upd")
+                .owner(userStorage.findById(1L).get())
+                .build();
+
+        mockMvc.perform(
+                        patch("/items/" + 1)
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(item))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Thing1"))
                 .andExpect(jsonPath("$.description").value("Thing1 description_Upd"));
     }
 

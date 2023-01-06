@@ -67,4 +67,5 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id. Попробуйте еще раз.");
         }
     }
+
 }

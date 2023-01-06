@@ -40,6 +40,106 @@ public class BookingControllerTest {
     }
 
     @Test
+    void getBookingsStateCurrentTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=CURRENT")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getBookingsStatePastTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=PAST")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(2)));
+    }
+
+    @Test
+    void getBookingsStateFutureTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=FUTURE")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getBookingsStateWaitingTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=WAITING")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)));
+    }
+
+    @Test
+    void getBookingsStateRejectedTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings?state=REJECTED")
+                                .header("X-Sharer-User-Id", 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateCurrentTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=CURRENT")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStatePastTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=PAST")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)));
+    }
+
+    @Test
+    void getOwnerBookingsStateFutureTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=FUTURE")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateWaitingTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=WAITING")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
+    void getOwnerBookingsStateRejectionTest() throws Exception {
+
+        mockMvc.perform(
+                        get("/bookings/owner?state=REJECTED")
+                                .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(0)));
+    }
+
+    @Test
     void getOwnerBookingsTest() throws Exception {
 
         mockMvc.perform(
@@ -77,6 +177,38 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.id").value("1"))
                 .andExpect(jsonPath("$.booker.id").value("2"))
                 .andExpect(jsonPath("$.status").value("WAITING"));
+    }
+
+    @Test
+    void postBookingByOwnerTest() throws Exception {
+        BookingDto bookingDto = BookingDto.builder()
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .itemId(1)
+                .build();
+
+        mockMvc.perform(
+                        post("/bookings")
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(bookingDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void postBookingNotAvailableTest() throws Exception {
+        BookingDto bookingDto = BookingDto.builder()
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .itemId(2)
+                .build();
+
+        mockMvc.perform(
+                        post("/bookings")
+                                .header("X-Sharer-User-Id", 1)
+                                .content(objectMapper.writeValueAsString(bookingDto))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -169,6 +301,45 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.id").value("3"))
                 .andExpect(jsonPath("$.booker.id").value("2"))
                 .andExpect(jsonPath("$.status").value("APPROVED"));
+    }
+
+    @Test
+    void patchBookingNotTest() throws Exception {
+        mockMvc.perform(
+                        patch("/bookings/3?approved=false")
+                                .header("X-Sharer-User-Id", 3)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.item.id").value("3"))
+                .andExpect(jsonPath("$.booker.id").value("2"))
+                .andExpect(jsonPath("$.status").value("REJECTED"));
+    }
+
+    @Test
+    void patchBookingIncorrectAnswerTest() throws Exception {
+        mockMvc.perform(
+                        patch("/bookings/3?approved=tru")
+                                .header("X-Sharer-User-Id", 3)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void patchBookingIncorrectIdTest() throws Exception {
+        mockMvc.perform(
+                        patch("/bookings/5?approved=true")
+                                .header("X-Sharer-User-Id", 3)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void patchBookingAnsweredTest() throws Exception {
+        mockMvc.perform(
+                        patch("/bookings/1?approved=true")
+                                .header("X-Sharer-User-Id", 2)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

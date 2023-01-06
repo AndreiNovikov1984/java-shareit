@@ -19,18 +19,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getUsers() {                 // метод получения списка пользователей
-        Collection<UserDto> users = userService.getUsers();
-        return users != null && !users.isEmpty()
-                ? new ResponseEntity<>(users, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {         // метод получения пользователя по Id
-        UserDto userdto = userService.getUserWithId(id);
-        return userdto != null
-                ? new ResponseEntity<>(userdto, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userService.getUserWithId(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -39,13 +33,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")                                  // метод обновления пользователя
-    public ResponseEntity<UserDto> patchUser(@PathVariable long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> patchUser(@PathVariable long id,
+                                             @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.patchUser(id, userDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")                                     // метод удаления пользователя
-    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+    public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
