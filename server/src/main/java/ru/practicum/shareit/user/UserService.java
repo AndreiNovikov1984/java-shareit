@@ -27,7 +27,6 @@ public class UserService {
     }
 
     public UserDto getUserWithId(long userId) {         // метод получения пользователя по Id
-        checkId(userId);
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return userMapper.convertUserToDto(user.get());
@@ -43,7 +42,6 @@ public class UserService {
     }
 
     public UserDto patchUser(long userId, UserDto userDto) {        // метод обновления пользователя
-        checkId(userId);
         User user = userMapper.convertDtoToUser(userDto);
         user.setId(userId);
         Optional<User> userToUpdate = userRepository.findById(userId);
@@ -58,14 +56,6 @@ public class UserService {
     }
 
     public void deleteUser(long userId) {                       // метод удаления пользователя
-        checkId(userId);
         userRepository.deleteById(userId);
     }
-
-    private void checkId(long userId) {
-        if ((userId < 0) || (userId == 0)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id. Попробуйте еще раз.");
-        }
-    }
-
 }
