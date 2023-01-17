@@ -55,10 +55,10 @@ public class BookingControllerGate {
     }
 
     @PatchMapping({"/{bookingId}"})        // метод подтверждения/отклонения запроса на бронирование
-    public ResponseEntity<Object> patchBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> patchBooking(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                                @RequestParam String approved,
-                                               @PathVariable Long bookingId) {
-        log.info("Response on booking with bookingId {} для userId={}, approved = {}", bookingId, userId, approved);
+                                               @Positive @PathVariable Long bookingId) {
+        log.info("Response on booking with bookingId={} для userId={}, approved = {}", bookingId, userId, approved);
         return bookingClient.patchBooking(userId, approved, bookingId);
     }
 }
