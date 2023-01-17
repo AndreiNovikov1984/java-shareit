@@ -35,7 +35,7 @@ public class BookingService {
     private final UserService userService;
     private final ItemRepository itemStorage;
 
-    public List<BookingDto> getBookings(long userID, TypeStatusDto status, int from, int size) { // метод получения данных о бронировании
+    public List<BookingDto> getBookings(Long userID, TypeStatusDto status, Integer from, Integer size) { // метод получения данных о бронировании
         userService.getUserWithId(userID);
         Page<Booking> bookingList;
         Sort sortById = Sort.by(Sort.Direction.ASC, "start");
@@ -67,7 +67,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDto> getOwnerBookings(long userID, TypeStatusDto status, int from, int size) { // метод получения данных о бронированиях всех вещей пользователя
+    public List<BookingDto> getOwnerBookings(Long userID, TypeStatusDto status, Integer from, Integer size) { // метод получения данных о бронированиях всех вещей пользователя
         userService.getUserWithId(userID);
         Page<Booking> bookingList;
         Sort sortBy = Sort.by(Sort.Direction.ASC, "start");
@@ -100,7 +100,7 @@ public class BookingService {
     }
 
 
-    public BookingDto getBooking(long userID, long bookingId) { // метод получения данных о бронировании
+    public BookingDto getBooking(Long userID, Long bookingId) { // метод получения данных о бронировании
         userService.getUserWithId(userID);
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         if (!booking.isPresent()) {
@@ -113,7 +113,7 @@ public class BookingService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не является владельцем/забронировавшим данную вещь.");
     }
 
-    public BookingDto postBooking(long userId, BookingDto bookingDto) { // метод создания нового запроса на бронирование
+    public BookingDto postBooking(Long userId, BookingDto bookingDto) { // метод создания нового запроса на бронирование
         bookingDto.setBooker(userService.getUserWithId(userId));
         Item item = getValidItem(bookingDto.getItemId());
         if (userId == item.getOwner().getId()) {
@@ -130,7 +130,7 @@ public class BookingService {
         }
     }
 
-    public BookingDto patchbooking(long userID, String approved, long bookingId) { // метод подтверждения/отклонения запроса на бронирование
+    public BookingDto patchbooking(Long userID, String approved, Long bookingId) { // метод подтверждения/отклонения запроса на бронирование
         userService.getUserWithId(userID);
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         if (!booking.isPresent()) {
@@ -172,12 +172,12 @@ public class BookingService {
         }
     }
 
-    public boolean validateBookingOfCommentors(Long itemId, long userID) {
+    public boolean validateBookingOfCommentors(Long itemId, Long userID) {
         Optional<Booking> booking = bookingRepository.findBokingByItemAndOwnerValidate(itemId, userID, Timestamp.valueOf(LocalDateTime.now()));
         return booking.isPresent();
     }
 
-    private Item getValidItem(long itemId) {
+    private Item getValidItem(Long itemId) {
         Optional<Item> item = itemStorage.findById(itemId);
         if (!item.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой вещи не существует.");

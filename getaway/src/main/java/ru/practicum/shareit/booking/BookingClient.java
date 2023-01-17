@@ -27,7 +27,7 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getBookings(long userId, TypeStatusDtoGate state, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookings(Long userId, TypeStatusDtoGate state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,
@@ -36,7 +36,7 @@ public class BookingClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> getOwnerBookings(long userId, TypeStatusDtoGate state, Integer from, Integer size) {
+    public ResponseEntity<Object> getOwnerBookings(Long userId, TypeStatusDtoGate state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,
@@ -45,15 +45,15 @@ public class BookingClient extends BaseClient {
         return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
+    public ResponseEntity<Object> getBooking(Long userId, Long bookingId) {
         return get("/" + bookingId, userId);
     }
 
-    public ResponseEntity<Object> postBooking(long userId, BookingDtoGate requestDto) {
+    public ResponseEntity<Object> postBooking(Long userId, BookingDtoGate requestDto) {
         return post("", userId, requestDto);
     }
 
-    public ResponseEntity<Object> patchBooking(long userId, String approved, long bookingId) {
+    public ResponseEntity<Object> patchBooking(Long userId, String approved, Long bookingId) {
         return patch("/" + bookingId + "?approved=" + approved, userId);
     }
 }

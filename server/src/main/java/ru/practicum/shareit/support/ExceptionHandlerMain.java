@@ -8,7 +8,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
-public class Exept {
+public class ExceptionHandlerMain {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handleException(ResponseStatusException e) {
         return new ResponseEntity<>(e.getMessage(), e.getStatus());

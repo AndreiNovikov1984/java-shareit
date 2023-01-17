@@ -21,7 +21,7 @@ public class ItemServiceTest {
     @Test
     void getItemTest() {
         exeption = Assertions.assertThrows(ResponseStatusException.class, () ->
-                itemService.getItem(1, 100));
+                itemService.getItem(1L, 100L));
         Assertions.assertEquals("404 NOT_FOUND \"Некорректный id вещи. Попробуйте еще раз.\"", exeption.getMessage());
     }
 
@@ -29,7 +29,7 @@ public class ItemServiceTest {
     @Test
     void getItemIncorrectTest() {
         exeption = Assertions.assertThrows(ResponseStatusException.class, () ->
-                itemService.getItem(1, 100));
+                itemService.getItem(1L, 100L));
         Assertions.assertEquals("404 NOT_FOUND \"Некорректный id вещи. Попробуйте еще раз.\"", exeption.getMessage());
     }
 }

@@ -22,45 +22,45 @@ public class ItemController {
     private final CommentMapper commentMapper;
 
     @GetMapping                                                 // метод получения списка вещей по ID пользователя
-    public ResponseEntity<Collection<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                        @RequestParam(defaultValue = "0") int from,
-                                                        @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<Collection<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                        @RequestParam(defaultValue = "0") Integer from,
+                                                        @RequestParam(defaultValue = "20") Integer size) {
         log.info("Получение вещей для userId={}, from={}, size={}", userId, from, size);
         return new ResponseEntity<>(itemService.getItems(userId, from, size), HttpStatus.OK);
     }
 
     @GetMapping("/{itemId}")                                // метод получения вещи по Id
-    public ResponseEntity<ItemDto> getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+    public ResponseEntity<ItemDto> getItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
         log.info("Получение вещи itemId={} для userId={}", itemId, userId);
         return new ResponseEntity<>(itemService.getItem(userId, itemId), HttpStatus.OK);
     }
 
     @GetMapping("/search")                              // метод поиска вещи
     public ResponseEntity<Collection<ItemDto>> search(@RequestParam String text,
-                                                      @RequestParam(defaultValue = "0") int from,
-                                                      @RequestParam(defaultValue = "20") int size) {
+                                                      @RequestParam(defaultValue = "0") Integer from,
+                                                      @RequestParam(defaultValue = "20") Integer size) {
         log.info("Поиск вещи по text={}, from={}, size={}", text, from, size);
         return new ResponseEntity<>(itemService.search(text, from, size), HttpStatus.OK);
     }
 
     @PostMapping                                        // метод создания новой вещи
-    public ResponseEntity<ItemDto> postItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<ItemDto> postItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                                             @RequestBody ItemDto itemDto) {
         log.info("Добавление вещи {} для userId={}", itemDto, userId);
         return new ResponseEntity<>(itemService.postItem(userId, itemDto), HttpStatus.OK);
     }
 
     @PostMapping("/{itemId}/comment")                                        // метод создания новой вещи
-    public ResponseEntity<CommentDto> postComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @PathVariable long itemId,
+    public ResponseEntity<CommentDto> postComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                  @PathVariable Long itemId,
                                                   @RequestBody CommentDto commentDto) {
         log.info("Добавление комментария {} для вещи itemId={}, userId={}", commentDto, itemId, userId);
         return new ResponseEntity<>(itemService.postComment(userId, itemId, commentMapper.convertDtoToComment(commentDto)), HttpStatus.OK);
     }
 
     @PatchMapping("/{itemId}")                              // метод обновления вещи
-    public ResponseEntity<ItemDto> patchItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @PathVariable long itemId,
+    public ResponseEntity<ItemDto> patchItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                             @PathVariable Long itemId,
                                              @RequestBody ItemDto itemDto) {
         log.info("Обновление вещи itemId={}, userId={}", itemId, userId);
         return new ResponseEntity<>(itemService.patchItem(userId, itemId, itemDto), HttpStatus.OK);

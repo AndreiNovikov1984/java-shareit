@@ -25,7 +25,7 @@ public class UserControllerGate {
     }
 
     @GetMapping("/{userId}")                                    // метод получения пользователя по Id
-    public ResponseEntity<Object> getUser(@Positive @PathVariable long userId) {
+    public ResponseEntity<Object> getUser(@Positive @PathVariable Long userId) {
         log.info("Get user with userId={}", userId);
         return userClient.getUser(userId);
     }
@@ -37,14 +37,14 @@ public class UserControllerGate {
     }
 
     @PatchMapping("/{userId}")                                  // метод обновления пользователя
-    public ResponseEntity<Object> patchUser(@Positive @PathVariable long userId,
+    public ResponseEntity<Object> patchUser(@Positive @PathVariable Long userId,
                                             @RequestBody UserDtoGate userDto) {
         log.info("Patching userId={}", userId);
         return userClient.patchUser(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")                                     // метод удаления пользователя
-    public ResponseEntity<Object> deleteUser(@Positive @PathVariable long userId) {
+    public ResponseEntity<Object> deleteUser(@Positive @PathVariable Long userId) {
         log.info("Deleting userId={}", userId);
         return userClient.deleteUser(userId);
     }

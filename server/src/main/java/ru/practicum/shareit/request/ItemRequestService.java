@@ -36,7 +36,7 @@ public class ItemRequestService {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    public Collection<ItemRequestAnswerDto> getRequests(long userId) {        // метод получения списка запросов по ID пользователя
+    public Collection<ItemRequestAnswerDto> getRequests(Long userId) {        // метод получения списка запросов по ID пользователя
         userService.getUserWithId(userId);
         return itemRequestRepository.findAllByRequestorId(userId).stream()
                 .map(itemRequestMapper::convertItemRequestToAnswerDto)
@@ -44,7 +44,7 @@ public class ItemRequestService {
                 .collect(Collectors.toList());
     }
 
-    public ItemRequestAnswerDto getRequest(long userId, long requestId) {        // метод получения списка запросов по ID пользователя
+    public ItemRequestAnswerDto getRequest(Long userId, Long requestId) {        // метод получения списка запросов по ID пользователя
         userService.getUserWithId(userId);
         Optional<ItemRequest> itemRequest = itemRequestRepository.findById(requestId);
         if (!itemRequest.isPresent()) {
@@ -55,7 +55,7 @@ public class ItemRequestService {
         return itemRequestAnswerDto;
     }
 
-    public Collection<ItemRequestAnswerDto> getAllRequests(long userId, int from, int size) {        // метод получения списка запросов по ID пользователя
+    public Collection<ItemRequestAnswerDto> getAllRequests(Long userId, Integer from, Integer size) {        // метод получения списка запросов по ID пользователя
         Sort sortById = Sort.by(Sort.Direction.ASC, "created");
         Pageable page = PageRequest.of((from / size), size, sortById);
         Page<ItemRequest> itemRequestsPage = itemRequestRepository.findAllByIdNot(userId, page);
@@ -68,7 +68,7 @@ public class ItemRequestService {
                     .collect(Collectors.toList());
     }
 
-    public ItemRequestDto postRequest(long userID, ItemRequestDto itemRequestDto) {   // метод добавления запроса вещи
+    public ItemRequestDto postRequest(Long userID, ItemRequestDto itemRequestDto) {   // метод добавления запроса вещи
         Validation.validationItemRequest(itemRequestDto);
         Optional<User> user = userRepository.findById(userID);
         if (user.isPresent()) {

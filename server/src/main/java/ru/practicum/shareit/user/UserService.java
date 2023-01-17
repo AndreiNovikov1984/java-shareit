@@ -26,7 +26,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDto getUserWithId(long userId) {         // метод получения пользователя по Id
+    public UserDto getUserWithId(Long userId) {         // метод получения пользователя по Id
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return userMapper.convertUserToDto(user.get());
@@ -41,7 +41,7 @@ public class UserService {
         return userMapper.convertUserToDto(userRepository.save(user));
     }
 
-    public UserDto patchUser(long userId, UserDto userDto) {        // метод обновления пользователя
+    public UserDto patchUser(Long userId, UserDto userDto) {        // метод обновления пользователя
         User user = userMapper.convertDtoToUser(userDto);
         user.setId(userId);
         Optional<User> userToUpdate = userRepository.findById(userId);
@@ -55,7 +55,7 @@ public class UserService {
         return userMapper.convertUserToDto(userRepository.save(user));
     }
 
-    public void deleteUser(long userId) {                       // метод удаления пользователя
+    public void deleteUser(Long userId) {                       // метод удаления пользователя
         userRepository.deleteById(userId);
     }
 }

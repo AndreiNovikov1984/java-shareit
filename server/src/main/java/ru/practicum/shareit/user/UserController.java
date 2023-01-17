@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable long userId) {         // метод получения пользователя по Id
+    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {         // метод получения пользователя по Id
         log.info("Получение пользователя с userId={}", userId);
         return new ResponseEntity<>(userService.getUserWithId(userId), HttpStatus.OK);
     }
@@ -38,14 +38,14 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")                                  // метод обновления пользователя
-    public ResponseEntity<UserDto> patchUser(@PathVariable long userId,
+    public ResponseEntity<UserDto> patchUser(@PathVariable Long userId,
                                              @RequestBody UserDto userDto) {
         log.info("Обновление пользователя с userId={}", userId);
         return new ResponseEntity<>(userService.patchUser(userId, userDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")                                     // метод удаления пользователя
-    public void deleteUser(@PathVariable long userId) {
+    public void deleteUser(@PathVariable Long userId) {
         log.info("Удаление пользователя с userId={}", userId);
         userService.deleteUser(userId);
     }

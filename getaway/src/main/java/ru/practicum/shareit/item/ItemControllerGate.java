@@ -21,31 +21,31 @@ public class ItemControllerGate {
     private final ItemClient itemClient;
 
     @GetMapping                                                 // метод получения списка вещей по ID пользователя
-    public ResponseEntity<Object> getItems(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-                                           @Positive @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<Object> getItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                                           @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                           @Positive @RequestParam(defaultValue = "20") Integer size) {
         log.info("Get items with userId={}, from={}, size={}", userId, from, size);
         return itemClient.getItems(userId, from, size);
     }
 
     @GetMapping("/{itemId}")                                // метод получения вещи по Id
-    public ResponseEntity<Object> getItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                          @Positive @PathVariable long itemId) {
+    public ResponseEntity<Object> getItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @Positive @PathVariable Long itemId) {
         log.info("Get item with userId={}, itemId={}", userId, itemId);
         return itemClient.getItem(userId, itemId);
     }
 
     @GetMapping("/search")                              // метод поиска вещи
-    public ResponseEntity<Object> search(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> search(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                          @RequestParam String text,
-                                         @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-                                         @Positive @RequestParam(defaultValue = "20") int size) {
+                                         @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                         @Positive @RequestParam(defaultValue = "20") Integer size) {
         log.info("Search items with userId={}, text={}, from={}, size={}", userId, text, from, size);
         return itemClient.search(userId, text, from, size);
     }
 
     @PostMapping                                        // метод создания новой вещи
-    public ResponseEntity<Object> postItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> postItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                            @RequestBody ItemDtoGate itemDto) {
         log.info("Creating item {}, userId={}", itemDto, userId);
         return itemClient.postItem(userId, itemDto);

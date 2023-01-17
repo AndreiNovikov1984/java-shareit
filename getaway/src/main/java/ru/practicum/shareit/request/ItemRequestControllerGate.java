@@ -20,28 +20,28 @@ public class ItemRequestControllerGate {
     private final ItemRequestClient itemRequestClient;
 
     @GetMapping                                                 // метод получения запросов вещей по ID пользователя
-    public ResponseEntity<Object> getRequests(@Positive @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> getRequests(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Get itemRequests with userId={}", userId);
         return itemRequestClient.getRequests(userId);
     }
 
     @GetMapping("/{requestId}")                             // метод получения запроса вещи по ID пользователя
-    public ResponseEntity<Object> getRequest(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                             @Positive @PathVariable long requestId) {
+    public ResponseEntity<Object> getRequest(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                                             @Positive @PathVariable Long requestId) {
         log.info("Get itemRequest with requestId={}, userId={}", requestId, userId);
         return itemRequestClient.getRequest(userId, requestId);
     }
 
     @GetMapping("/all")                                   // метод получения всех запросов вещей по ID пользователя
-    public ResponseEntity<Object> getAllRequests(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
-                                                 @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-                                                 @Positive @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<Object> getAllRequests(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                                                 @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                 @Positive @RequestParam(defaultValue = "20") Integer size) {
         log.info("Get ALL itemRequests with userId={}, from={}, size={}", userId, from, size);
         return itemRequestClient.getAllRequests(userId, from, size);
     }
 
     @PostMapping                                        // метод создания нового запроса на вещь
-    public ResponseEntity<Object> postRequest(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> postRequest(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestBody ItemRequestDtoGate itemRequestDto) {
         log.info("Creating itemRequest {}, userId={}", itemRequestDto, userId);
         return itemRequestClient.postRequest(userId, itemRequestDto);

@@ -35,7 +35,7 @@ public class ItemService {
     private final CommentMapper commentMapper;
     private final BookingService bookingService;
 
-    public Collection<ItemDto> getItems(long userId, int from, int size) {        // метод получения списка вещей по ID пользователя
+    public Collection<ItemDto> getItems(Long userId, Integer from, Integer size) {        // метод получения списка вещей по ID пользователя
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         Pageable page = PageRequest.of((from / size), size, sortById);
         return itemRepository.findAllByOwnerId(userId, page).stream()
@@ -45,7 +45,7 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public ItemDto getItem(long userId, long itemId) {                               // метод получения вещи по ID
+    public ItemDto getItem(Long userId, Long itemId) {                               // метод получения вещи по ID
         Optional<Item> item = itemRepository.findById(itemId);
         if (!item.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Некорректный id вещи. Попробуйте еще раз.");
@@ -60,7 +60,7 @@ public class ItemService {
         }
     }
 
-    public Collection<ItemDto> search(String text, int from, int size) {                            // метод поиска вещи
+    public Collection<ItemDto> search(String text, Integer from, Integer size) {                            // метод поиска вещи
         if ((text == null) || (text.equals(""))) {
             return new ArrayList<>();
         } else {
@@ -72,7 +72,7 @@ public class ItemService {
         }
     }
 
-    public ItemDto postItem(long userID, ItemDto itemDto) {         // метод добавления вещи
+    public ItemDto postItem(Long userID, ItemDto itemDto) {         // метод добавления вещи
         Optional<User> user = userRepository.findById(userID);
         if (user.isPresent()) {
             Item item = itemMapper.convertDtoToItem(itemDto);
@@ -84,7 +84,7 @@ public class ItemService {
         }
     }
 
-    public ItemDto patchItem(long userID, long itemId, ItemDto itemDto) { // метод обновления вещи
+    public ItemDto patchItem(Long userID, Long itemId, ItemDto itemDto) { // метод обновления вещи
         Optional<User> user = userRepository.findById(userID);
         if (user.isPresent()) {
             itemDto.setId(itemId);
@@ -113,7 +113,7 @@ public class ItemService {
         }
     }
 
-    public CommentDto postComment(long userID, Long itemId, Comment comment) {
+    public CommentDto postComment(Long userID, Long itemId, Comment comment) {
         Validation.validationComment(comment);
         if (!bookingService.validateBookingOfCommentors(itemId, userID)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нельзя добавить комментарий к данной вещи");

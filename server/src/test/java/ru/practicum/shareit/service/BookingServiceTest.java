@@ -21,14 +21,14 @@ public class BookingServiceTest {
     @Test
     void getBookingsIncorrectIdStatus() {
         exeption = Assertions.assertThrows(ResponseStatusException.class, () ->
-                bookingService.getBooking(1, 100));
+                bookingService.getBooking(1L, 100L));
         Assertions.assertEquals("404 NOT_FOUND \"Такого бронирования не существует.\"", exeption.getMessage());
     }
 
     @Test
     void getBookingsIncorrectUserIdStatus() {
         exeption = Assertions.assertThrows(ResponseStatusException.class, () ->
-                bookingService.getBooking(3, 1));
+                bookingService.getBooking(3L, 1L));
         Assertions.assertEquals("404 NOT_FOUND \"Пользователь не является владельцем/забронировавшим данную вещь.\"", exeption.getMessage());
     }
 }
